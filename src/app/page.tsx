@@ -1,4 +1,5 @@
 import Image from "next/image";
+import BottomNavigation from "../components/BottomNavigation";
 
 // Datos mockeados de noticias basadas en el lore real de la base de datos
 const mockNews = [
@@ -206,36 +207,6 @@ function NewsCard({ news }: { news: typeof mockNews[0] }) {
   );
 }
 
-// Componente de menú de navegación
-function BottomNavigation() {
-  const menuItems = [
-    { name: "Mundo", icon: "🏠", active: true },
-    { name: "Explorar", icon: "🔍", active: false },
-    { name: "Ayuda", icon: "❓", active: false },
-    { name: "Mi Perfil", icon: "👤", active: false }
-  ];
-
-  return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t-2 border-purple-200 dark:border-purple-700 z-50">
-      <div className="flex justify-around items-center h-16">
-        {menuItems.map((item) => (
-          <button
-            key={item.name}
-            className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-300 transform hover:scale-110 ${
-              item.active 
-                ? 'text-purple-600 dark:text-purple-400' 
-                : 'text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-300'
-            }`}
-          >
-            <span className="text-2xl mb-1 drop-shadow-sm">{item.icon}</span>
-            <span className="text-xs font-bold">{item.name}</span>
-          </button>
-        ))}
-      </div>
-    </nav>
-  );
-}
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950 pb-20 relative overflow-hidden">
@@ -279,21 +250,21 @@ export default function Home() {
       <main className="container mx-auto px-4 py-6 relative z-10">
         {/* Estadísticas del mundo */}
         <div className="grid grid-cols-4 gap-4 mb-8">
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 text-center border-2 border-purple-200 dark:border-purple-700">
+            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">2</div>
+            <div className="text-xs text-purple-600 dark:text-purple-400">Criaturas</div>
+          </div>
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 text-center border-2 border-blue-200 dark:border-blue-700">
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">1</div>
-            <div className="text-xs text-blue-600 dark:text-blue-400">Eryndor</div>
-          </div>
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 text-center border-2 border-gray-200 dark:border-gray-700">
-            <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">1</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">Deo</div>
-          </div>
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 text-center border-2 border-red-200 dark:border-red-700">
-            <div className="text-2xl font-bold text-red-600 dark:text-red-400">1</div>
-            <div className="text-xs text-red-600 dark:text-red-400">Egea</div>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">4</div>
+            <div className="text-xs text-blue-600 dark:text-blue-400">Mundos</div>
           </div>
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 text-center border-2 border-green-200 dark:border-green-700">
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">1</div>
-            <div className="text-xs text-green-600 dark:text-green-400">Koril</div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">26</div>
+            <div className="text-xs text-green-600 dark:text-green-400">Lugares</div>
+          </div>
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 text-center border-2 border-red-200 dark:border-red-700">
+            <div className="text-2xl font-bold text-red-600 dark:text-red-400">12</div>
+            <div className="text-xs text-red-600 dark:text-red-400">Noticias</div>
           </div>
         </div>
 
@@ -369,7 +340,7 @@ export default function Home() {
       </main>
 
       {/* Menú de navegación inferior */}
-      <BottomNavigation />
+      <BottomNavigation currentPath="/" />
     </div>
   );
 }
