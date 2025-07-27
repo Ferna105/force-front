@@ -149,7 +149,10 @@ function WorldCard({ world }: { world: World }) {
   const placesCount = world.attributes.places?.data?.length || 0;
   
   return (
-    <article className={`${colors.bg} ${colors.border} backdrop-blur-sm rounded-2xl shadow-lg border-2 overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-2xl`}>
+    <article 
+      className={`${colors.bg} ${colors.border} backdrop-blur-sm rounded-2xl shadow-lg border-2 overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-2xl cursor-pointer`}
+      onClick={() => window.location.href = `/explore/${world.id}`}
+    >
       <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-400/20 to-gray-500/20 dark:from-gray-600/20 dark:to-gray-700/20"></div>
         <Image
@@ -165,6 +168,12 @@ function WorldCard({ world }: { world: World }) {
           <span className={`text-xs px-2 py-1 rounded-full bg-white/80 dark:bg-gray-800/80 font-medium ${colors.accent}`}>
             🌍 {type}
           </span>
+        </div>
+        {/* Overlay de hover */}
+        <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+          <div className="opacity-0 hover:opacity-100 transition-opacity duration-300">
+            <span className="text-white font-bold text-lg">Ver Detalles</span>
+          </div>
         </div>
       </div>
       <div className="p-5">

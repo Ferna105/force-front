@@ -110,6 +110,11 @@ export type MonstersResponse = StrapiResponse<Monster[]>;
 export type WorldsResponse = StrapiResponse<World[]>;
 export type PlacesResponse = StrapiResponse<Place[]>;
 
+// Tipos para respuestas de getById (un solo objeto)
+export type MonsterResponse = StrapiResponse<Monster>;
+export type WorldResponse = StrapiResponse<World>;
+export type PlaceResponse = StrapiResponse<Place>;
+
 // Tipos para parámetros de consulta
 export interface QueryParams {
   populate?: string | string[];

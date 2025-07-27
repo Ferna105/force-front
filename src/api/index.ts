@@ -11,6 +11,9 @@ export type {
   MonstersResponse,
   WorldsResponse,
   PlacesResponse,
+  MonsterResponse,
+  WorldResponse,
+  PlaceResponse,
   QueryParams,
   ApiError
 } from './types';

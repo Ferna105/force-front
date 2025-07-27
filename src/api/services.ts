@@ -2,7 +2,10 @@ import apiClient from './client';
 import { 
   MonstersResponse, 
   WorldsResponse, 
-  PlacesResponse, 
+  PlacesResponse,
+  MonsterResponse,
+  WorldResponse,
+  PlaceResponse,
   QueryParams,
   ApiError 
 } from './types';
@@ -63,7 +66,7 @@ export const monstersService = {
   },
 
   // Obtener un monstruo por ID
-  async getById(id: number, params?: QueryParams): Promise<MonstersResponse> {
+  async getById(id: number, params?: QueryParams): Promise<MonsterResponse> {
     try {
       const queryString = buildQueryParams(params);
       const response = await apiClient.get(`/monsters/${id}?${queryString}`);
@@ -117,7 +120,7 @@ export const worldsService = {
   },
 
   // Obtener un mundo por ID
-  async getById(id: number, params?: QueryParams): Promise<WorldsResponse> {
+  async getById(id: number, params?: QueryParams): Promise<WorldResponse> {
     try {
       const queryString = buildQueryParams(params);
       const response = await apiClient.get(`/worlds/${id}?${queryString}`);
@@ -171,7 +174,7 @@ export const placesService = {
   },
 
   // Obtener un lugar por ID
-  async getById(id: number, params?: QueryParams): Promise<PlacesResponse> {
+  async getById(id: number, params?: QueryParams): Promise<PlaceResponse> {
     try {
       const queryString = buildQueryParams(params);
       const response = await apiClient.get(`/places/${id}?${queryString}`);
