@@ -2,59 +2,91 @@
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { worldsService } from "../../../api/services";
-import type { World } from "../../../api/types";
+import { placesService } from "../../../../../api/services";
+import type { Place } from "../../../../../api/types";
 
-// Función para obtener la URL de la imagen
-function getImageUrl(world: World): string {
-  if (world.attributes.Image?.data?.attributes?.formats?.large?.url) {
-    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${world.attributes.Image.data.attributes.formats.large.url}`;
+// Función para obtener la URL de la imagen banner
+function getBannerUrl(place: Place): string {
+  if (place.attributes.Banner?.data?.attributes?.formats?.large?.url) {
+    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${place.attributes.Banner.data.attributes.formats.large.url}`;
   }
-  if (world.attributes.Image?.data?.attributes?.formats?.medium?.url) {
-    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${world.attributes.Image.data.attributes.formats.medium.url}`;
+  if (place.attributes.Banner?.data?.attributes?.formats?.medium?.url) {
+    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${place.attributes.Banner.data.attributes.formats.medium.url}`;
   }
-  if (world.attributes.Image?.data?.attributes?.url) {
-    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${world.attributes.Image.data.attributes.url}`;
+  if (place.attributes.Banner?.data?.attributes?.url) {
+    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${place.attributes.Banner.data.attributes.url}`;
   }
   return "/next.svg"; // Fallback
 }
 
-export default function WorldPage() {
+// Función para obtener el icono y color según el tipo
+function getTypeInfo(type: string) {
+  const typeInfo = {
+    'information': {
+      icon: 'ℹ️',
+      color: 'blue',
+      label: 'Información',
+      bgColor: 'bg-blue-100 dark:bg-blue-900/50',
+      textColor: 'text-blue-600 dark:text-blue-400',
+      borderColor: 'border-blue-200 dark:border-blue-700'
+    },
+    'game': {
+      icon: '🎮',
+      color: 'red',
+      label: 'Juego',
+      bgColor: 'bg-red-100 dark:bg-red-900/50',
+      textColor: 'text-red-600 dark:text-red-400',
+      borderColor: 'border-red-200 dark:border-red-700'
+    },
+    'shop': {
+      icon: '🛍️',
+      color: 'green',
+      label: 'Tienda',
+      bgColor: 'bg-green-100 dark:bg-green-900/50',
+      textColor: 'text-green-600 dark:text-green-400',
+      borderColor: 'border-green-200 dark:border-green-700'
+    }
+  };
+  return typeInfo[type as keyof typeof typeInfo] || typeInfo.information;
+}
+
+export default function PlacePage() {
   const params = useParams();
   const router = useRouter();
   const worldId = params.worldId as string;
+  const placeId = params.placeId as string;
   
-  const [world, setWorld] = useState<World | null>(null);
+  const [place, setPlace] = useState<Place | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchWorld = async () => {
+    const fetchPlace = async () => {
       try {
         setLoading(true);
         setError(null);
         
-        const response = await worldsService.getById(parseInt(worldId), {
-          populate: ['Image', 'places']
+        const response = await placesService.getById(parseInt(placeId), {
+          populate: ['Banner']
         });
         
         if (response.data) {
-          setWorld(response.data);
+          setPlace(response.data);
         } else {
-          setError('Mundo no encontrado');
+          setError('Lugar no encontrado');
         }
       } catch (err) {
-        console.error('Error fetching world:', err);
-        setError('Error al cargar el mundo');
+        console.error('Error fetching place:', err);
+        setError('Error al cargar el lugar');
       } finally {
         setLoading(false);
       }
     };
 
-    if (worldId) {
-      fetchWorld();
+    if (placeId) {
+      fetchPlace();
     }
-  }, [worldId]);
+  }, [placeId]);
 
   if (loading) {
     return (
@@ -72,7 +104,7 @@ export default function WorldPage() {
               </button>
               <div className="text-center">
                 <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
-                  Cargando Mundo...
+                  Cargando Lugar...
                 </h1>
               </div>
               <div className="w-20"></div> {/* Spacer para centrar */}
@@ -86,7 +118,7 @@ export default function WorldPage() {
             <div className="text-center">
               <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
               <p className="text-purple-600 dark:text-purple-400 font-medium">
-                Cargando mundo mágico...
+                Cargando lugar mágico...
               </p>
             </div>
           </div>
@@ -95,7 +127,7 @@ export default function WorldPage() {
     );
   }
 
-  if (error || !world) {
+  if (error || !place) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950">
         {/* Header */}
@@ -127,13 +159,13 @@ export default function WorldPage() {
                 <span className="text-2xl">⚠️</span>
               </div>
               <p className="text-red-600 dark:text-red-400 font-medium mb-2">
-                {error || 'Mundo no encontrado'}
+                {error || 'Lugar no encontrado'}
               </p>
               <button
-                onClick={() => router.push('/explore')}
+                onClick={() => router.push(`/explore/${worldId}`)}
                 className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
-                Volver a Explorar
+                Volver al Mundo
               </button>
             </div>
           </div>
@@ -142,7 +174,8 @@ export default function WorldPage() {
     );
   }
 
-  const imageUrl = getImageUrl(world);
+  const bannerUrl = getBannerUrl(place);
+  const typeInfo = getTypeInfo(place.attributes.Type);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950">
@@ -167,10 +200,10 @@ export default function WorldPage() {
             </button>
             <div className="text-center">
               <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
-                {world.attributes.Name}
+                {place.attributes.Name}
               </h1>
               <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">
-                ✨ Mundo Mágico ✨
+                ✨ Lugar Mágico ✨
               </p>
             </div>
             <div className="w-20"></div> {/* Spacer para centrar */}
@@ -180,13 +213,13 @@ export default function WorldPage() {
 
       {/* Contenido principal */}
       <main className="container mx-auto px-8 py-6 relative z-10 max-w-4xl">
-        {/* Imagen del mundo */}
+        {/* Imagen banner del lugar */}
         <div className="mb-8">
-          <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-2xl">
+          <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-br from-gray-400/20 to-gray-500/20 dark:from-gray-600/20 dark:to-gray-700/20"></div>
             <Image
-              src={imageUrl}
-              alt={world.attributes.Name}
+              src={bannerUrl}
+              alt={place.attributes.Name}
               fill
               className="object-cover"
               priority
@@ -196,106 +229,41 @@ export default function WorldPage() {
             </div>
             <div className="absolute bottom-4 left-4">
               <span className="text-sm px-3 py-1 rounded-full bg-white/90 dark:bg-gray-800/90 font-medium text-purple-600 dark:text-purple-400 backdrop-blur-sm">
-                🌍 Mundo
+                {typeInfo.icon} {typeInfo.label}
               </span>
             </div>
-
-            {/* Zonas clickeables para lugares */}
-            {world.attributes.places?.data?.map((place, index) => {
-              // Mapear colores por tipo de lugar
-              const getPlaceColor = (type: string) => {
-                const colors = {
-                  'information': 'border-blue-400',
-                  'game': 'border-red-500',
-                  'shop': 'border-green-500'
-                };
-                return colors[type as keyof typeof colors] || 'border-purple-500';
-              };
-
-              const getPlaceHoverColor = (type: string) => {
-                const colors = {
-                  'information': 'hover:border-blue-300 hover:bg-blue-400/20',
-                  'game': 'hover:border-red-300 hover:bg-red-500/20',
-                  'shop': 'hover:border-green-300 hover:bg-green-500/20'
-                };
-                return colors[type as keyof typeof colors] || 'hover:border-purple-300 hover:bg-purple-500/20';
-              };
-
-              const getPlaceBgColor = (type: string) => {
-                const colors = {
-                  'information': 'bg-blue-600',
-                  'game': 'bg-red-600',
-                  'shop': 'bg-green-600'
-                };
-                return colors[type as keyof typeof colors] || 'bg-purple-600';
-              };
-
-              // Generar posiciones dinámicas basadas en el índice
-              const positions = [
-                { top: '20%', left: '30%' },
-                { top: '35%', left: '45%' },
-                { top: '50%', left: '60%' },
-                { top: '65%', left: '25%' },
-                { top: '40%', left: '70%' },
-                { top: '75%', left: '40%' },
-                { top: '30%', left: '50%' },
-                { top: '55%', left: '35%' },
-                { top: '80%', left: '55%' },
-                { top: '25%', left: '65%' }
-              ];
-
-              const position = positions[index % positions.length];
-
-              return (
-                <a
-                  key={place.id}
-                  href={`/explore/${worldId}/places/${place.id}`}
-                  title={place.attributes.Name}
-                  className={`absolute border-2 rounded-full transition-all duration-300 cursor-pointer group ${getPlaceColor(place.attributes.Type)} ${getPlaceHoverColor(place.attributes.Type)}`}
-                  style={{ 
-                    top: position.top, 
-                    left: position.left, 
-                    width: '40px', 
-                    height: '40px' 
-                  }}
-                >
-                  <div className={`absolute -top-8 left-1/2 transform -translate-x-1/2 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap ${getPlaceBgColor(place.attributes.Type)}`}>
-                    {place.attributes.Name}
-                  </div>
-                </a>
-              );
-            })}
           </div>
         </div>
 
-        {/* Información del mundo */}
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border-2 border-purple-200 dark:border-purple-700">
+        {/* Información del lugar */}
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border-2 border-purple-200 dark:border-purple-700 mb-6">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 text-center">
-            {world.attributes.Name}
+            {place.attributes.Name}
           </h2>
           
           <div className="prose prose-purple dark:prose-invert max-w-none">
             <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-              {world.attributes.Description || "Descripción del mundo mágico..."}
+              {place.attributes.Description || "Descripción del lugar mágico..."}
             </p>
           </div>
+        </div>
 
-          {/* Estadísticas básicas */}
-          <div className="mt-8 grid grid-cols-2 gap-4">
-            <div className="bg-purple-100 dark:bg-purple-900/50 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                {world.attributes.places?.data?.length || 0}
+        {/* Tipo de lugar */}
+        <div className={`bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border-2 ${typeInfo.borderColor}`}>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">
+            📍 Tipo de Lugar
+          </h3>
+          
+          <div className="flex items-center justify-center">
+            <div className={`${typeInfo.bgColor} rounded-xl p-6 text-center border-2 ${typeInfo.borderColor}`}>
+              <div className="text-4xl mb-2">
+                {typeInfo.icon}
               </div>
-              <div className="text-sm text-purple-600 dark:text-purple-400">
-                Lugares Descubiertos
+              <div className={`text-xl font-bold ${typeInfo.textColor}`}>
+                {typeInfo.label}
               </div>
-            </div>
-            <div className="bg-blue-100 dark:bg-blue-900/50 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                🌟
-              </div>
-              <div className="text-sm text-blue-600 dark:text-blue-400">
-                Mundo Activo
+              <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                {place.attributes.Type}
               </div>
             </div>
           </div>
@@ -304,7 +272,7 @@ export default function WorldPage() {
         {/* Información adicional */}
         <div className="mt-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border-2 border-purple-200 dark:border-purple-700">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">
-            💡 Información del Mundo
+            💡 Información del Lugar
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
             <div className="space-y-3">
@@ -314,25 +282,25 @@ export default function WorldPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-purple-600 dark:text-purple-400">⚔️</span>
-                <span><strong>Dificultad:</strong> Moderada</span>
+                <span><strong>Accesibilidad:</strong> Público</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-purple-600 dark:text-purple-400">🗺️</span>
-                <span><strong>Región:</strong> Principal</span>
+                <span><strong>Región:</strong> Mundo Principal</span>
               </div>
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="text-purple-600 dark:text-purple-400">🌙</span>
-                <span><strong>Tipo:</strong> Mundo Mágico</span>
+                <span><strong>Categoría:</strong> {typeInfo.label}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-purple-600 dark:text-purple-400">✨</span>
-                <span><strong>Magia:</strong> Alta</span>
+                <span><strong>Magia:</strong> Presente</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-purple-600 dark:text-purple-400">👥</span>
-                <span><strong>Población:</strong> Diversa</span>
+                <span><strong>Visitantes:</strong> Bienvenidos</span>
               </div>
             </div>
           </div>
