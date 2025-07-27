@@ -1,0 +1,130 @@
+// Tipos base para las respuestas de Strapi
+export interface StrapiResponse<T> {
+  data: T;
+  meta: {
+    pagination?: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
+}
+
+export interface StrapiEntity {
+  id: number;
+  attributes: {
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+  };
+}
+
+// Tipos para imágenes de Strapi
+export interface StrapiImage {
+  data: {
+    id: number;
+    attributes: {
+      name: string;
+      alternativeText: string | null;
+      caption: string | null;
+      width: number;
+      height: number;
+      formats: {
+        thumbnail: StrapiImageFormat;
+        small: StrapiImageFormat;
+        medium: StrapiImageFormat;
+        large: StrapiImageFormat;
+      };
+      hash: string;
+      ext: string;
+      mime: string;
+      size: number;
+      url: string;
+      previewUrl: string | null;
+      provider: string;
+      provider_metadata: any;
+      createdAt: string;
+      updatedAt: string;
+    };
+  } | null;
+}
+
+export interface StrapiImageFormat {
+  name: string;
+  hash: string;
+  ext: string;
+  mime: string;
+  path: string | null;
+  width: number;
+  height: number;
+  size: number;
+  sizeInBytes: number;
+  url: string;
+}
+
+// Tipos específicos para cada entidad basados en la respuesta real
+export interface Monster extends StrapiEntity {
+  attributes: {
+    Name: string;
+    Image: StrapiImage | null;
+    Nature: string | null;
+    Origin: string | null;
+    AverageHeight: number | null;
+    AverageWeight: number | null;
+    InnateAbility: string | null;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+  };
+}
+
+export interface Place extends StrapiEntity {
+  attributes: {
+    Name: string;
+    Description: string | null;
+    Banner: StrapiImage | null;
+    Type: 'shop' | 'game' | 'information';
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+  };
+}
+
+export interface World extends StrapiEntity {
+  attributes: {
+    Name: string;
+    Description: string | null;
+    Image: StrapiImage | null;
+    places: {
+      data: Place[];
+    };
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+  };
+}
+
+// Tipos para las respuestas de la API
+export type MonstersResponse = StrapiResponse<Monster[]>;
+export type WorldsResponse = StrapiResponse<World[]>;
+export type PlacesResponse = StrapiResponse<Place[]>;
+
+// Tipos para parámetros de consulta
+export interface QueryParams {
+  populate?: string | string[];
+  sort?: string | string[];
+  filters?: Record<string, any>;
+  pagination?: {
+    page?: number;
+    pageSize?: number;
+  };
+  fields?: string[];
+}
+
+// Tipo para errores de la API
+export interface ApiError {
+  message: string;
+  status: number;
+  details?: any;
+} 

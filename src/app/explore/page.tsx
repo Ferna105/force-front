@@ -1,60 +1,27 @@
+'use client';
 import Image from "next/image";
 import BottomNavigation from "../../components/BottomNavigation";
+import { useExploreData } from "../../api/hooks";
+import type { World } from "../../api/types";
 
-// Datos mockeados de mundos basados en la información de la base de datos
-const worlds = [
+// Datos mockeados de mundos como fallback
+const fallbackWorlds: World[] = [
   {
     id: 1,
-    name: "Eryndor",
-    description: "Eryndor es un mundo de contrastes y fuerzas primordiales. Al norte, las cumbres eternas, cubiertas de nieve, se alzan como guardianes ancestrales sobre vastos bosques verdes y lagos cristalinos que reflejan un cielo siempre cambiante. Hacia el centro, una cordillera colosal divide el continente, separando las tierras fértiles de los áridos desiertos del sur. En el este, un desgarrón de fuego y magma serpentea como una herida ardiente, recordando que la tierra está viva y en constante transformación.",
-    image: "/next.svg",
-    color: "blue",
-    places: 7,
-    type: "Mundo Principal",
-    features: ["Montañas nevadas", "Bosques verdes", "Lagos cristalinos", "Desiertos áridos", "Grietas de magma"],
-    status: "Activo",
-    difficulty: "Moderado"
-  },
-  {
-    id: 2,
-    name: "Deo",
-    description: "Deo no es solo una luna: es un enigma envuelto en piedra y metal, una construcción ciclópea orbitando en perpetuo silencio sobre Eryndor. Su superficie, árida y grisácea, imita el aspecto de un astro natural, pero la simetría de sus túneles, las estructuras que emergen entre los cráteres y los inmensos portales circulares revelan su verdadero origen: una megápolis lunar abandonada o una estación artificial disfrazada de satélite.",
-    image: "/vercel.svg",
-    color: "gray",
-    places: 9,
-    type: "Luna Artificial",
-    features: ["Túneles simétricos", "Estructuras metálicas", "Portales circulares", "Cristales oscuros", "Máquinas antiguas"],
-    status: "Silencioso",
-    difficulty: "Alto"
-  },
-  {
-    id: 3,
-    name: "Egea",
-    description: "Egea es un astro de un intenso tono carmesí, marcado por cicatrices de antiguas tormentas cósmicas y cráteres profundos que cuentan historias de impactos milenarios. Su superficie árida y polvorienta refleja el fuego interno que todavía arde bajo su corteza, visible en las fisuras que emanan un brillo anaranjado, como venas de magma en constante agitación.",
-    image: "/globe.svg",
-    color: "red",
-    places: 3,
-    type: "Luna de Fuego",
-    features: ["Superficie carmesí", "Cráteres profundos", "Fisuras de magma", "Erupciones subterráneas", "Corazón ardiente"],
-    status: "Inestable",
-    difficulty: "Extremo"
-  },
-  {
-    id: 4,
-    name: "Koril",
-    description: "Koril es una luna de tonos verdes brillantes, cubierta de un manto de minerales esmeralda y formaciones rocosas que parecen absorber la luz de las estrellas. Su superficie, marcada por grandes cráteres dorados, refleja una atmósfera misteriosa y viva, como si la luna misma respirara una energía orgánica.",
-    image: "/file.svg",
-    color: "green",
-    places: 7,
-    type: "Luna Bioluminiscente",
-    features: ["Minerales esmeralda", "Cráteres dorados", "Energía orgánica", "Torres metálicas", "Criaturas cristalinas"],
-    status: "Vivo",
-    difficulty: "Moderado"
+    attributes: {
+      Name: "Eryndor",
+      Description: "Eryndor es un mundo de contrastes y fuerzas primordiales...",
+      Image: null,
+      places: { data: [] },
+      createdAt: "",
+      updatedAt: "",
+      publishedAt: ""
+    }
   }
 ];
 
 // Función para obtener colores del mundo
-function getWorldColors(world: typeof worlds[0]) {
+function getWorldColors(world: World) {
   const colors = {
     blue: {
       bg: "bg-blue-100 dark:bg-blue-900",
@@ -81,7 +48,17 @@ function getWorldColors(world: typeof worlds[0]) {
       accent: "text-green-600 dark:text-green-400"
     }
   };
-  return colors[world.color as keyof typeof colors] || colors.blue;
+  
+  // Mapear nombres de mundos a colores
+  const worldColorMap: Record<string, keyof typeof colors> = {
+    "Eryndor": "blue",
+    "Deo": "gray", 
+    "Egea": "red",
+    "Koril": "green"
+  };
+  
+  const color = worldColorMap[world.attributes.Name] || "blue";
+  return colors[color] || colors.blue;
 }
 
 // Función para obtener color de dificultad
@@ -106,17 +83,78 @@ function getStatusColor(status: string) {
   return colors[status as keyof typeof colors] || colors.Activo;
 }
 
+// Función para obtener características del mundo basadas en el nombre
+function getWorldFeatures(worldName: string): string[] {
+  const featuresMap: Record<string, string[]> = {
+    "Eryndor": ["Montañas nevadas", "Bosques verdes", "Lagos cristalinos", "Desiertos áridos", "Grietas de magma"],
+    "Deo": ["Túneles simétricos", "Estructuras metálicas", "Portales circulares", "Cristales oscuros", "Máquinas antiguas"],
+    "Egea": ["Superficie carmesí", "Cráteres profundos", "Fisuras de magma", "Erupciones subterráneas", "Corazón ardiente"],
+    "Koril": ["Minerales esmeralda", "Cráteres dorados", "Energía orgánica", "Torres metálicas", "Criaturas cristalinas"]
+  };
+  return featuresMap[worldName] || ["Características únicas"];
+}
+
+// Función para obtener tipo de mundo basado en el nombre
+function getWorldType(worldName: string): string {
+  const typeMap: Record<string, string> = {
+    "Eryndor": "Mundo Principal",
+    "Deo": "Luna Artificial", 
+    "Egea": "Luna de Fuego",
+    "Koril": "Luna Bioluminiscente"
+  };
+  return typeMap[worldName] || "Mundo Mágico";
+}
+
+// Función para obtener estado del mundo basado en el nombre
+function getWorldStatus(worldName: string): string {
+  const statusMap: Record<string, string> = {
+    "Eryndor": "Activo",
+    "Deo": "Silencioso",
+    "Egea": "Inestable", 
+    "Koril": "Vivo"
+  };
+  return statusMap[worldName] || "Desconocido";
+}
+
+// Función para obtener dificultad del mundo basado en el nombre
+function getWorldDifficulty(worldName: string): string {
+  const difficultyMap: Record<string, string> = {
+    "Eryndor": "Moderado",
+    "Deo": "Alto",
+    "Egea": "Extremo",
+    "Koril": "Moderado"
+  };
+  return difficultyMap[worldName] || "Moderado";
+}
+
+// Función para obtener la URL de la imagen
+function getImageUrl(world: World): string {
+  if (world.attributes.Image?.data?.attributes?.formats?.medium?.url) {
+    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${world.attributes.Image.data.attributes.formats.medium.url}`;
+  }
+  if (world.attributes.Image?.data?.attributes?.url) {
+    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${world.attributes.Image.data.attributes.url}`;
+  }
+  return "/next.svg"; // Fallback
+}
+
 // Componente de tarjeta de mundo
-function WorldCard({ world }: { world: typeof worlds[0] }) {
+function WorldCard({ world }: { world: World }) {
   const colors = getWorldColors(world);
+  const features = getWorldFeatures(world.attributes.Name);
+  const type = getWorldType(world.attributes.Name);
+  const status = getWorldStatus(world.attributes.Name);
+  const difficulty = getWorldDifficulty(world.attributes.Name);
+  const imageUrl = getImageUrl(world);
+  const placesCount = world.attributes.places?.data?.length || 0;
   
   return (
     <article className={`${colors.bg} ${colors.border} backdrop-blur-sm rounded-2xl shadow-lg border-2 overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-2xl`}>
       <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-400/20 to-gray-500/20 dark:from-gray-600/20 dark:to-gray-700/20"></div>
         <Image
-          src={world.image}
-          alt={world.name}
+          src={imageUrl}
+          alt={world.attributes.Name}
           fill
           className="object-cover"
         />
@@ -125,46 +163,46 @@ function WorldCard({ world }: { world: typeof worlds[0] }) {
         </div>
         <div className="absolute bottom-2 left-2">
           <span className={`text-xs px-2 py-1 rounded-full bg-white/80 dark:bg-gray-800/80 font-medium ${colors.accent}`}>
-            🌍 {world.type}
+            🌍 {type}
           </span>
         </div>
       </div>
       <div className="p-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-            {world.name}
+            {world.attributes.Name}
           </h3>
           <div className="flex gap-2">
-            <span className={`text-xs px-2 py-1 rounded-full border ${getStatusColor(world.status)}`}>
-              {world.status}
+            <span className={`text-xs px-2 py-1 rounded-full border ${getStatusColor(status)}`}>
+              {status}
             </span>
-            <span className={`text-xs px-2 py-1 rounded-full border ${getDifficultyColor(world.difficulty)}`}>
-              {world.difficulty}
+            <span className={`text-xs px-2 py-1 rounded-full border ${getDifficultyColor(difficulty)}`}>
+              {difficulty}
             </span>
           </div>
         </div>
         
         <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-4">
-          {world.description}
+          {world.attributes.Description || "Descripción del mundo mágico..."}
         </p>
         
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-500 dark:text-gray-400">Lugares descubiertos:</span>
-            <span className={`text-sm font-bold ${colors.accent}`}>{world.places} lugares</span>
+            <span className={`text-sm font-bold ${colors.accent}`}>{placesCount} lugares</span>
           </div>
           
           <div className="pt-3 border-t border-gray-200 dark:border-gray-600">
             <span className="text-xs text-gray-500 dark:text-gray-400 mb-2 block">Características principales:</span>
             <div className="flex flex-wrap gap-1">
-              {world.features.slice(0, 3).map((feature, index) => (
+              {features.slice(0, 3).map((feature, index) => (
                 <span key={index} className="text-xs bg-white/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full">
                   ✨ {feature}
                 </span>
               ))}
-              {world.features.length > 3 && (
+              {features.length > 3 && (
                 <span className="text-xs bg-white/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full">
-                  +{world.features.length - 3} más
+                  +{features.length - 3} más
                 </span>
               )}
             </div>
@@ -175,7 +213,114 @@ function WorldCard({ world }: { world: typeof worlds[0] }) {
   );
 }
 
-export default function Explore() {
+// Componente principal
+function ExploreContent() {
+  const { data, loading, error } = useExploreData();
+  
+  // Usar datos de la API si están disponibles, sino usar fallback
+  const worlds = data?.worlds || fallbackWorlds;
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950 pb-20 relative overflow-hidden">
+        {/* Header */}
+        <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b-2 border-purple-200 dark:border-purple-700 sticky top-0 z-40">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex justify-center items-center">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <Image
+                    src="/next.svg"
+                    alt="Logo Mágico"
+                    width={50}
+                    height={50}
+                    className="dark:invert drop-shadow-lg"
+                  />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-ping"></div>
+                </div>
+                <div className="text-center">
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+                    Explorar Mundos
+                  </h1>
+                  <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">
+                    ✨ Descubre todos los reinos ✨
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Loading State */}
+        <main className="container mx-auto px-4 py-6 relative z-10">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-purple-600 dark:text-purple-400 font-medium">
+                Cargando mundos mágicos...
+              </p>
+            </div>
+          </div>
+        </main>
+
+        <BottomNavigation currentPath="/explore" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950 pb-20 relative overflow-hidden">
+        {/* Header */}
+        <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b-2 border-purple-200 dark:border-purple-700 sticky top-0 z-40">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex justify-center items-center">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <Image
+                    src="/next.svg"
+                    alt="Logo Mágico"
+                    width={50}
+                    height={50}
+                    className="dark:invert drop-shadow-lg"
+                  />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-ping"></div>
+                </div>
+                <div className="text-center">
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+                    Explorar Mundos
+                  </h1>
+                  <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">
+                    ✨ Descubre todos los reinos ✨
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Error State */}
+        <main className="container mx-auto px-4 py-6 relative z-10">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">⚠️</span>
+              </div>
+              <p className="text-red-600 dark:text-red-400 font-medium mb-2">
+                Error al cargar los mundos
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {error}
+              </p>
+            </div>
+          </div>
+        </main>
+
+        <BottomNavigation currentPath="/explore" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950 pb-20 relative overflow-hidden">
       {/* Elementos decorativos de fondo */}
@@ -224,7 +369,7 @@ export default function Explore() {
           </div>
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 text-center border-2 border-green-200 dark:border-green-700">
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-              {worlds.reduce((total, world) => total + world.places, 0)}
+              {worlds.reduce((total, world) => total + (world.attributes.places?.data?.length || 0), 0)}
             </div>
             <div className="text-xs text-green-600 dark:text-green-400">Lugares Totales</div>
           </div>
@@ -275,4 +420,8 @@ export default function Explore() {
       <BottomNavigation currentPath="/explore" />
     </div>
   );
+}
+
+export default function Explore() {
+  return <ExploreContent />;
 } 
