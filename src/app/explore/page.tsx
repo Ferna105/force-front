@@ -234,7 +234,7 @@ function ExploreContent() {
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950 pb-20 relative overflow-hidden">
         {/* Header */}
         <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b-2 border-purple-200 dark:border-purple-700 sticky top-0 z-40">
-          <div className="container mx-auto px-4 py-4">
+          <div className="container mx-auto px-8 py-4">
             <div className="flex justify-center items-center">
               <div className="flex items-center gap-3">
                 <div className="relative">
@@ -282,7 +282,7 @@ function ExploreContent() {
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950 pb-20 relative overflow-hidden">
         {/* Header */}
         <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b-2 border-purple-200 dark:border-purple-700 sticky top-0 z-40">
-          <div className="container mx-auto px-4 py-4">
+          <div className="container mx-auto px-8 py-4">
             <div className="flex justify-center items-center">
               <div className="flex items-center gap-3">
                 <div className="relative">
@@ -342,7 +342,7 @@ function ExploreContent() {
 
       {/* Header con Logo */}
       <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b-2 border-purple-200 dark:border-purple-700 sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-8 py-4">
           <div className="flex justify-center items-center">
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -369,7 +369,7 @@ function ExploreContent() {
       </header>
 
       {/* Contenido principal */}
-      <main className="container mx-auto px-4 py-6 relative z-10">
+      <main className="container mx-auto px-8 py-6 relative z-10 max-w-6xl">
         {/* Estadísticas de exploración */}
         <div className="grid grid-cols-2 gap-4 mb-8">
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 text-center border-2 border-purple-200 dark:border-purple-700">

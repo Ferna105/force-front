@@ -220,7 +220,7 @@ export default function Home() {
 
       {/* Header con Logo */}
       <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b-2 border-purple-200 dark:border-purple-700 sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-8 py-4">
           <div className="flex justify-center items-center">
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -238,7 +238,7 @@ export default function Home() {
                   Mundo Mágico
                 </h1>
                 <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">
-                  ✨ Descubre la Fantasía ✨
+                  ✨ Descubre la magia ✨
                 </p>
               </div>
             </div>
@@ -247,7 +247,7 @@ export default function Home() {
       </header>
 
       {/* Contenido principal */}
-      <main className="container mx-auto px-4 py-6 relative z-10">
+      <main className="container mx-auto px-8 py-6 relative z-10 max-w-6xl">
         {/* Estadísticas del mundo */}
         <div className="grid grid-cols-4 gap-4 mb-8">
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 text-center border-2 border-purple-200 dark:border-purple-700">

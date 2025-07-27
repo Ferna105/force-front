@@ -61,7 +61,7 @@ export default function WorldPage() {
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950">
         {/* Header */}
         <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b-2 border-purple-200 dark:border-purple-700 sticky top-0 z-40">
-          <div className="container mx-auto px-4 py-4">
+          <div className="container mx-auto px-8 py-4">
             <div className="flex items-center justify-between">
               <button
                 onClick={() => router.back()}
@@ -100,7 +100,7 @@ export default function WorldPage() {
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950">
         {/* Header */}
         <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b-2 border-purple-200 dark:border-purple-700 sticky top-0 z-40">
-          <div className="container mx-auto px-4 py-4">
+          <div className="container mx-auto px-8 py-4">
             <div className="flex items-center justify-between">
               <button
                 onClick={() => router.back()}
@@ -156,7 +156,7 @@ export default function WorldPage() {
 
       {/* Header */}
       <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b-2 border-purple-200 dark:border-purple-700 sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
             <button
               onClick={() => router.back()}
@@ -179,10 +179,10 @@ export default function WorldPage() {
       </header>
 
       {/* Contenido principal */}
-      <main className="container mx-auto px-4 py-6 relative z-10">
+      <main className="container mx-auto px-8 py-6 relative z-10 max-w-4xl">
         {/* Imagen del mundo */}
         <div className="mb-8">
-          <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-br from-gray-400/20 to-gray-500/20 dark:from-gray-600/20 dark:to-gray-700/20"></div>
             <Image
               src={imageUrl}
