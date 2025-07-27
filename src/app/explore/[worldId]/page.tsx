@@ -199,6 +199,72 @@ export default function WorldPage() {
                 🌍 Mundo
               </span>
             </div>
+
+            {/* Zonas clickeables para lugares */}
+            {world.attributes.places?.data?.map((place, index) => {
+              // Mapear colores por tipo de lugar
+              const getPlaceColor = (type: string) => {
+                const colors = {
+                  'information': 'border-blue-400',
+                  'game': 'border-red-500',
+                  'shop': 'border-green-500'
+                };
+                return colors[type as keyof typeof colors] || 'border-purple-500';
+              };
+
+              const getPlaceHoverColor = (type: string) => {
+                const colors = {
+                  'information': 'hover:border-blue-300 hover:bg-blue-400/20',
+                  'game': 'hover:border-red-300 hover:bg-red-500/20',
+                  'shop': 'hover:border-green-300 hover:bg-green-500/20'
+                };
+                return colors[type as keyof typeof colors] || 'hover:border-purple-300 hover:bg-purple-500/20';
+              };
+
+              const getPlaceBgColor = (type: string) => {
+                const colors = {
+                  'information': 'bg-blue-600',
+                  'game': 'bg-red-600',
+                  'shop': 'bg-green-600'
+                };
+                return colors[type as keyof typeof colors] || 'bg-purple-600';
+              };
+
+              // Generar posiciones dinámicas basadas en el índice
+              const positions = [
+                { top: '20%', left: '30%' },
+                { top: '35%', left: '45%' },
+                { top: '50%', left: '60%' },
+                { top: '65%', left: '25%' },
+                { top: '40%', left: '70%' },
+                { top: '75%', left: '40%' },
+                { top: '30%', left: '50%' },
+                { top: '55%', left: '35%' },
+                { top: '80%', left: '55%' },
+                { top: '25%', left: '65%' }
+              ];
+
+              const position = positions[index % positions.length];
+
+              return (
+                <a
+                  key={place.id}
+                  href={`/locations/${place.attributes.Name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
+                  title={place.attributes.Name}
+                  className={`absolute border-2 rounded-full transition-all duration-300 cursor-pointer group ${getPlaceColor(place.attributes.Type)} ${getPlaceHoverColor(place.attributes.Type)}`}
+                  style={{ 
+                    top: position.top, 
+                    left: position.left, 
+                    width: '40px', 
+                    height: '40px' 
+                  }}
+                >
+                  <div className={`absolute -top-8 left-1/2 transform -translate-x-1/2 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap ${getPlaceBgColor(place.attributes.Type)}`}>
+                    {place.attributes.Name}
+                  </div>
+                </a>
+              );
+            })}
           </div>
         </div>
 
