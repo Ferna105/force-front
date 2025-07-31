@@ -122,23 +122,26 @@ export default function MonsterDetailPage() {
           )}
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          {/* Imagen principal */}
-          <div className="relative aspect-video mb-8 rounded-xl overflow-hidden bg-gradient-to-br from-purple-500/20 to-blue-500/20">
-            <Image
-              src={getImageUrl(monster)}
-              alt={monster.attributes.Name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          </div>
+        <div className="max-w-6xl mx-auto">
+          {/* Layout principal: Imagen a la izquierda, información a la derecha */}
+          <div className="grid lg:grid-cols-2 gap-8 items-start">
+            {/* Columna izquierda - Imagen */}
+            <div className="sticky top-6">
+              <div className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-purple-500/20 to-blue-500/20">
+                <Image
+                  src={getImageUrl(monster)}
+                  alt={monster.attributes.Name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              </div>
+            </div>
 
-          {/* Información del monstruo */}
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Columna izquierda - Información básica */}
+            {/* Columna derecha - Información */}
             <div className="space-y-6">
+              {/* Información básica */}
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                 <h3 className="text-xl font-semibold mb-4 text-purple-300">Información Básica</h3>
                 
@@ -164,16 +167,15 @@ export default function MonsterDetailPage() {
                 )}
               </div>
 
+              {/* Habilidad innata */}
               {monster.attributes.InnateAbility && (
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                   <h3 className="text-xl font-semibold mb-4 text-purple-300">Habilidad Innata</h3>
                   <p className="text-gray-200 leading-relaxed">{monster.attributes.InnateAbility}</p>
                 </div>
               )}
-            </div>
 
-            {/* Columna derecha - Información adicional */}
-            <div className="space-y-6">
+              {/* Sobre el monstruo */}
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                 <h3 className="text-xl font-semibold mb-4 text-purple-300">Sobre {monster.attributes.Name}</h3>
                 <p className="text-gray-200 leading-relaxed">
@@ -195,6 +197,7 @@ export default function MonsterDetailPage() {
                 </p>
               </div>
 
+              {/* Estadísticas */}
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                 <h3 className="text-xl font-semibold mb-4 text-purple-300">Estadísticas</h3>
                 <div className="space-y-3">
