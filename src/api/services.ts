@@ -1,13 +1,15 @@
 import apiClient from './client';
-import { 
-  MonstersResponse, 
-  WorldsResponse, 
+import {
+  MonstersResponse,
+  WorldsResponse,
   PlacesResponse,
   MonsterResponse,
   WorldResponse,
   PlaceResponse,
   QueryParams,
-  ApiError 
+  Monster,
+  World,
+  Place,
 } from './types';
 
 // Función helper para construir query parameters
@@ -77,7 +79,7 @@ export const monstersService = {
   },
 
   // Crear un nuevo monstruo
-  async create(data: any): Promise<MonstersResponse> {
+  async create(data: Monster): Promise<MonstersResponse> {
     try {
       const response = await apiClient.post('/monsters', { data });
       return response.data;
@@ -87,7 +89,7 @@ export const monstersService = {
   },
 
   // Actualizar un monstruo
-  async update(id: number, data: any): Promise<MonstersResponse> {
+  async update(id: number, data: Monster): Promise<MonstersResponse> {
     try {
       const response = await apiClient.put(`/monsters/${id}`, { data });
       return response.data;
@@ -131,7 +133,7 @@ export const worldsService = {
   },
 
   // Crear un nuevo mundo
-  async create(data: any): Promise<WorldsResponse> {
+  async create(data: World): Promise<WorldsResponse> {
     try {
       const response = await apiClient.post('/worlds', { data });
       return response.data;
@@ -141,7 +143,7 @@ export const worldsService = {
   },
 
   // Actualizar un mundo
-  async update(id: number, data: any): Promise<WorldsResponse> {
+  async update(id: number, data: World): Promise<WorldsResponse> {
     try {
       const response = await apiClient.put(`/worlds/${id}`, { data });
       return response.data;
@@ -196,7 +198,7 @@ export const placesService = {
   },
 
   // Crear un nuevo lugar
-  async create(data: any): Promise<PlacesResponse> {
+  async create(data: Place): Promise<PlacesResponse> {
     try {
       const response = await apiClient.post('/places', { data });
       return response.data;
@@ -206,7 +208,7 @@ export const placesService = {
   },
 
   // Actualizar un lugar
-  async update(id: number, data: any): Promise<PlacesResponse> {
+  async update(id: number, data: Place): Promise<PlacesResponse> {
     try {
       const response = await apiClient.put(`/places/${id}`, { data });
       return response.data;
@@ -254,7 +256,7 @@ export const dataService = {
   // Obtener datos para la página de exploración
   async getExploreData() {
     try {
-      const worlds = await worldsService.getAll({ 
+      const worlds = await worldsService.getAll({
         populate: '*',
         sort: 'Name:asc'
       });

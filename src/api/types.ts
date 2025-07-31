@@ -43,7 +43,7 @@ export interface StrapiImage {
       url: string;
       previewUrl: string | null;
       provider: string;
-      provider_metadata: any;
+      provider_metadata: unknown;
       createdAt: string;
       updatedAt: string;
     };
@@ -119,7 +119,7 @@ export type PlaceResponse = StrapiResponse<Place>;
 export interface QueryParams {
   populate?: string | string[];
   sort?: string | string[];
-  filters?: Record<string, any>;
+  filters?: Record<string, string>;
   pagination?: {
     page?: number;
     pageSize?: number;
@@ -131,5 +131,5 @@ export interface QueryParams {
 export interface ApiError {
   message: string;
   status: number;
-  details?: any;
+  details?: unknown;
 } 
