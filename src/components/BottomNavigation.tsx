@@ -13,6 +13,7 @@ export default function BottomNavigation({ currentPath }: BottomNavigationProps)
   const menuItems: MenuItem[] = [
     { name: "Mundo", icon: "🏠", active: currentPath === "/", href: "/" },
     { name: "Explorar", icon: "🔍", active: currentPath === "/explore", href: "/explore" },
+    { name: "Bestiario", icon: "🐉", active: currentPath === "/monsters", href: "/monsters" },
     { name: "Ayuda", icon: "❓", active: currentPath === "/help", href: "/help" },
     { name: "Mi Perfil", icon: "👤", active: currentPath === "/profile", href: "/profile" }
   ];
