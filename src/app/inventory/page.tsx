@@ -4,8 +4,23 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useItems, type Item } from '@/api';
+import Image from 'next/image';
 
-// Función para obtener el ícono según el tipo de item
+// Función para obtener la URL de la imagen del item
+function getItemIconUrl(item: Item): string {
+  if (item.attributes.icon?.data?.attributes?.formats?.thumbnail?.url) {
+    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${item.attributes.icon.data.attributes.formats.thumbnail.url}`;
+  }
+  if (item.attributes.icon?.data?.attributes?.formats?.small?.url) {
+    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${item.attributes.icon.data.attributes.formats.small.url}`;
+  }
+  if (item.attributes.icon?.data?.attributes?.url) {
+    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${item.attributes.icon.data.attributes.url}`;
+  }
+  return "/next.svg"; // Fallback
+}
+
+// Función para obtener el ícono según el tipo de item (fallback)
 function getItemIcon(type: string): string {
   const icons = {
     weapon: '⚔️',
@@ -74,7 +89,7 @@ export default function InventoryPage() {
   // Obtener items del backend con paginación de 10
   const { data: items, loading: itemsLoading, error: itemsError } = useItems(
     useMemo(() => ({
-      pagination: { pageSize: 10 },
+      pagination: { pageSize: 100 },
       populate: 'icon'
     }), [])
   );
@@ -232,62 +247,82 @@ export default function InventoryPage() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredInventory.map((item) => (
                 <div
                   key={item.id}
-                  className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${getRarityBgColor(item.attributes.rarity)} ${getRarityBorderColor(item.attributes.rarity)}`}
+                  className={`p-6 rounded-2xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-xl ${getRarityBgColor(item.attributes.rarity)} ${getRarityBorderColor(item.attributes.rarity)}`}
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl">{getItemIcon(item.attributes.type)}</span>
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
-                          {item.attributes.name}
-                        </h3>
-                        <div className="flex items-center gap-2">
-                          <span className={`text-xs font-medium ${getRarityColor(item.attributes.rarity)}`}>
-                            {item.attributes.rarity.toUpperCase()}
-                          </span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {getTypeName(item.attributes.type)}
-                          </span>
-                        </div>
+                  <div className="flex flex-col items-center text-center mb-4">
+                    <div className="relative mb-4">
+                      {item.attributes.icon ? (
+                        <Image
+                          src={getItemIconUrl(item)}
+                          alt={item.attributes.name}
+                          width={96}
+                          height={96}
+                          className="w-24 h-24 object-contain"
+                          onError={(e) => {
+                            // Fallback to emoji if image fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const fallback = document.createElement('span');
+                            fallback.className = 'text-5xl';
+                            fallback.textContent = getItemIcon(item.attributes.type);
+                            target.parentNode?.insertBefore(fallback, target);
+                          }}
+                        />
+                      ) : (
+                        <span className="text-5xl">{getItemIcon(item.attributes.type)}</span>
+                      )}
+                      {item.attributes.is_stackable && item.attributes.max_stack > 1 && (
+                        <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-bold">
+                          {item.attributes.max_stack}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="w-full">
+                      <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">
+                        {item.attributes.name}
+                      </h3>
+                      <div className="flex items-center justify-center gap-2 mb-3">
+                        <span className={`text-xs font-bold px-2 py-1 rounded-full ${getRarityColor(item.attributes.rarity)} bg-opacity-20 ${getRarityBgColor(item.attributes.rarity)}`}>
+                          {item.attributes.rarity.toUpperCase()}
+                        </span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+                          {getTypeName(item.attributes.type)}
+                        </span>
                       </div>
                     </div>
-                    {item.attributes.is_stackable && item.attributes.max_stack > 1 && (
-                      <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
-                        Stack: {item.attributes.max_stack}
-                      </span>
-                    )}
                   </div>
                   
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 text-center">
                     {item.attributes.description || 'Sin descripción'}
                   </p>
                   
                   {/* Información adicional del item */}
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {item.attributes.value && (
-                      <div className="flex items-center gap-1 text-xs">
+                      <div className="flex items-center justify-center gap-2 text-sm">
                         <span className="text-yellow-600">💰</span>
                         <span className="text-gray-600 dark:text-gray-400">Valor: {item.attributes.value}</span>
                       </div>
                     )}
                     {item.attributes.weight && (
-                      <div className="flex items-center gap-1 text-xs">
+                      <div className="flex items-center justify-center gap-2 text-sm">
                         <span className="text-gray-600">⚖️</span>
                         <span className="text-gray-600 dark:text-gray-400">Peso: {item.attributes.weight}kg</span>
                       </div>
                     )}
                     {item.attributes.usable && (
-                      <div className="flex items-center gap-1 text-xs">
+                      <div className="flex items-center justify-center gap-2 text-sm">
                         <span className="text-green-600">✨</span>
                         <span className="text-gray-600 dark:text-gray-400">Usable</span>
                       </div>
                     )}
                     {item.attributes.cooldown > 0 && (
-                      <div className="flex items-center gap-1 text-xs">
+                      <div className="flex items-center justify-center gap-2 text-sm">
                         <span className="text-blue-600">⏱️</span>
                         <span className="text-gray-600 dark:text-gray-400">Cooldown: {item.attributes.cooldown}s</span>
                       </div>
