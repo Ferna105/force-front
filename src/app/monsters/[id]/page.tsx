@@ -94,8 +94,8 @@ export default function MonsterDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950 pb-20 relative overflow-hidden">
-      <main className="container mx-auto px-8 py-6 relative z-10 max-w-6xl">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950 relative overflow-hidden">
+      <div className="container mx-auto px-8 py-6 relative z-10 max-w-6xl">
         {/* Botón de volver */}
         <div className="mb-6">
           <button 
@@ -229,7 +229,7 @@ export default function MonsterDetailPage() {
             </Link>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 } 

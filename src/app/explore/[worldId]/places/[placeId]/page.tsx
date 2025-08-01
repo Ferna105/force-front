@@ -113,7 +113,7 @@ export default function PlacePage() {
         </header>
 
         {/* Loading State */}
-        <main className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
@@ -122,7 +122,7 @@ export default function PlacePage() {
               </p>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     );
   }
@@ -152,7 +152,7 @@ export default function PlacePage() {
         </header>
 
         {/* Error State */}
-        <main className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -169,7 +169,7 @@ export default function PlacePage() {
               </button>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     );
   }
@@ -212,7 +212,7 @@ export default function PlacePage() {
       </header>
 
       {/* Contenido principal */}
-      <main className="container mx-auto px-8 py-6 relative z-10 max-w-4xl">
+      <div className="container mx-auto px-8 py-6 relative z-10 max-w-4xl">
         {/* Imagen banner del lugar */}
         <div className="mb-8">
           <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden shadow-2xl">
@@ -305,7 +305,7 @@ export default function PlacePage() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 } 

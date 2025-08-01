@@ -8,9 +8,10 @@ export default function Navigation() {
   const { user, logout, isLoading } = useAuth();
   const pathname = usePathname();
 
+
   if (isLoading) {
     return (
-      <nav className="bg-gray-900 text-white p-4">
+      <nav className="bg-gray-900 text-white p-4 sticky top-0 z-50 shadow-lg">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link href="/" className="text-xl font-bold">
             Force Front
@@ -22,60 +23,55 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="bg-gray-900 text-white p-4">
+    <nav className="bg-gray-900 text-white p-4 sticky top-0 z-50 shadow-lg">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link href="/" className="text-xl font-bold">
           Force Front
         </Link>
-        
+
         <div className="flex items-center space-x-6">
-          <Link 
-            href="/" 
-            className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${
-              pathname === '/' ? 'text-blue-400' : ''
-            }`}
+          <Link
+            href="/"
+            className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${pathname === '/' ? 'text-blue-400' : ''
+              }`}
           >
             <span>🏠</span>
             <span>Mundo</span>
           </Link>
-          
-          <Link 
-            href="/explore" 
-            className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${
-              pathname === '/explore' ? 'text-blue-400' : ''
-            }`}
+
+          <Link
+            href="/explore"
+            className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${pathname === '/explore' ? 'text-blue-400' : ''
+              }`}
           >
             <span>🔍</span>
             <span>Explorar</span>
           </Link>
-          
-          <Link 
-            href="/monsters" 
-            className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${
-              pathname === '/monsters' ? 'text-blue-400' : ''
-            }`}
+
+          <Link
+            href="/monsters"
+            className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${pathname === '/monsters' ? 'text-blue-400' : ''
+              }`}
           >
             <span>🐉</span>
             <span>Bestiario</span>
           </Link>
-          
-          <Link 
-            href="/help" 
-            className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${
-              pathname === '/help' ? 'text-blue-400' : ''
-            }`}
+
+          <Link
+            href="/help"
+            className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${pathname === '/help' ? 'text-blue-400' : ''
+              }`}
           >
             <span>❓</span>
             <span>Ayuda</span>
           </Link>
-          
+
           {user ? (
             <div className="flex items-center space-x-4">
-              <Link 
-                href="/profile" 
-                className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${
-                  pathname === '/profile' ? 'text-blue-400' : ''
-                }`}
+              <Link
+                href="/profile"
+                className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${pathname === '/profile' ? 'text-blue-400' : ''
+                  }`}
               >
                 <span>👤</span>
                 <span>Mi Perfil</span>

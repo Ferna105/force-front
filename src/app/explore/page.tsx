@@ -260,7 +260,7 @@ function ExploreContent() {
         </header>
 
         {/* Loading State */}
-        <main className="container mx-auto px-4 py-6 relative z-10">
+        <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
@@ -269,7 +269,7 @@ function ExploreContent() {
               </p>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     );
   }
@@ -306,7 +306,7 @@ function ExploreContent() {
         </header>
 
         {/* Error State */}
-        <main className="container mx-auto px-4 py-6 relative z-10">
+        <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -320,13 +320,13 @@ function ExploreContent() {
               </p>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950 pb-20 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950 relative overflow-hidden">
       {/* Elementos decorativos de fondo */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-20 h-20 bg-purple-300/20 rounded-full blur-xl animate-pulse"></div>
@@ -364,7 +364,7 @@ function ExploreContent() {
       </header>
 
       {/* Contenido principal */}
-      <main className="container mx-auto px-8 py-6 relative z-10 max-w-6xl">
+      <div className="container mx-auto px-8 py-6 relative z-10 max-w-6xl">
         {/* Estadísticas de exploración */}
         <div className="grid grid-cols-2 gap-4 mb-8">
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 text-center border-2 border-purple-200 dark:border-purple-700">
@@ -418,7 +418,7 @@ function ExploreContent() {
             </div>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   );
 }
