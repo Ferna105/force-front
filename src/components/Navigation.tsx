@@ -69,12 +69,12 @@ export default function Navigation() {
           {user ? (
             <div className="flex items-center space-x-4">
               <Link
-                href="/profile"
-                className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${pathname === '/profile' ? 'text-blue-400' : ''
+                href="/inventory"
+                className={`flex items-center space-x-1 hover:text-blue-400 transition-colors ${pathname === '/inventory' ? 'text-blue-400' : ''
                   }`}
               >
-                <span>👤</span>
-                <span>Mi Perfil</span>
+                <span>🎒</span>
+                <span>Inventario</span>
               </Link>
               <span className="text-sm text-gray-300">
                 Hola, {user.username}

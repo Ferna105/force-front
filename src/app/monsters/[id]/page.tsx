@@ -123,7 +123,7 @@ export default function MonsterDetailPage() {
           {/* Layout principal: Imagen a la izquierda, información a la derecha */}
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             {/* Columna izquierda - Imagen */}
-            <div className="sticky top-6">
+            <div>
               <div className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-purple-500/20 to-blue-500/20">
                 <Image
                   src={getImageUrl(monster)}

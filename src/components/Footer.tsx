@@ -96,11 +96,11 @@ export default function Footer() {
                     <span className="text-purple-300">👤</span> Hola, {user.username}
                   </div>
                   <Link
-                    href="/profile"
-                    className={`block text-sm hover:text-purple-300 transition-colors ${pathname === '/profile' ? 'text-purple-300' : 'text-gray-300'
+                    href="/inventory"
+                    className={`block text-sm hover:text-purple-300 transition-colors ${pathname === '/inventory' ? 'text-purple-300' : 'text-gray-300'
                       }`}
                   >
-                    👤 Mi Perfil
+                    🎒 Inventario
                   </Link>
                 </>
               ) : (
