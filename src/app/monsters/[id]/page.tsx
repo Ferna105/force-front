@@ -6,7 +6,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { monstersService } from '../../../api/services';
 import { Monster } from '../../../api/types';
-import BottomNavigation from '../../../components/BottomNavigation';
 
 export default function MonsterDetailPage() {
   const params = useParams();
@@ -60,7 +59,6 @@ export default function MonsterDetailPage() {
             </div>
           </div>
         </div>
-        <BottomNavigation currentPath="/monsters" />
       </div>
     );
   }
@@ -91,7 +89,6 @@ export default function MonsterDetailPage() {
             </div>
           </div>
         </div>
-        <BottomNavigation currentPath="/monsters" />
       </div>
     );
   }
@@ -233,8 +230,6 @@ export default function MonsterDetailPage() {
           </div>
         </div>
       </main>
-
-      <BottomNavigation currentPath="/monsters" />
     </div>
   );
 } 

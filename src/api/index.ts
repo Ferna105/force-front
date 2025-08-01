@@ -15,7 +15,12 @@ export type {
   WorldResponse,
   PlaceResponse,
   QueryParams,
-  ApiError
+  ApiError,
+  AuthUser,
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  AuthError
 } from './types';
 
 // Exportar servicios
@@ -23,5 +28,19 @@ export {
   monstersService,
   worldsService,
   placesService,
-  dataService
-} from './services'; 
+  dataService,
+  authService
+} from './services';
+
+// Exportar hooks
+export {
+  useHomeData,
+  useExploreData,
+  useMonsters,
+  useWorlds,
+  usePlaces,
+  usePlacesByWorld,
+  useLogin,
+  useRegister,
+  useGetMe
+} from './hooks'; 

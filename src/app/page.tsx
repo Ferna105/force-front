@@ -1,5 +1,5 @@
 import Image from "next/image";
-import BottomNavigation from "../components/BottomNavigation";
+import Navigation from "../components/Navigation";
 
 // Datos mockeados de noticias basadas en el lore real de la base de datos
 const mockNews = [
@@ -218,6 +218,9 @@ export default function Home() {
         <div className="absolute top-60 left-1/2 w-12 h-12 bg-yellow-300/20 rounded-full blur-xl animate-pulse delay-1500"></div>
       </div>
 
+      {/* Navegación */}
+      <Navigation />
+
       {/* Header con Logo */}
       <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b-2 border-purple-200 dark:border-purple-700 sticky top-0 z-40">
         <div className="container mx-auto px-8 py-4">
@@ -338,9 +341,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-      {/* Menú de navegación inferior */}
-      <BottomNavigation currentPath="/" />
     </div>
   );
 }

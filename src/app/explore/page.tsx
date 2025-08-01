@@ -1,6 +1,5 @@
 'use client';
 import Image from "next/image";
-import BottomNavigation from "../../components/BottomNavigation";
 import { useExploreData } from "../../api/hooks";
 import type { World } from "../../api/types";
 
@@ -271,8 +270,6 @@ function ExploreContent() {
             </div>
           </div>
         </main>
-
-        <BottomNavigation currentPath="/explore" />
       </div>
     );
   }
@@ -324,8 +321,6 @@ function ExploreContent() {
             </div>
           </div>
         </main>
-
-        <BottomNavigation currentPath="/explore" />
       </div>
     );
   }
@@ -424,9 +419,6 @@ function ExploreContent() {
           </div>
         </section>
       </main>
-
-      {/* Menú de navegación inferior */}
-      <BottomNavigation currentPath="/explore" />
     </div>
   );
 }

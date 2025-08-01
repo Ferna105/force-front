@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { dataService, monstersService, worldsService, placesService } from './services';
-import type { Monster, World, Place, QueryParams } from './types';
+import { dataService, monstersService, worldsService, placesService, authService } from './services';
+import type { Monster, World, Place, QueryParams, LoginRequest, RegisterRequest, AuthUser } from './types';
 
 // Hook para manejar estados de carga y error
 interface UseApiState<T> {
@@ -190,4 +190,80 @@ export function usePlacesByWorld(worldId: number, params?: QueryParams) {
   }, [worldId, params]);
 
   return state;
+}
+
+// Hook para login
+export function useLogin() {
+  const [state, setState] = useState<{
+    loading: boolean;
+    error: string | null;
+  }>({
+    loading: false,
+    error: null
+  });
+
+  const login = async (credentials: LoginRequest) => {
+    try {
+      setState({ loading: true, error: null });
+      const response = await authService.login(credentials);
+      setState({ loading: false, error: null });
+      return response;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error en login';
+      setState({ loading: false, error: errorMessage });
+      throw error;
+    }
+  };
+
+  return { login, ...state };
+}
+
+// Hook para registro
+export function useRegister() {
+  const [state, setState] = useState<{
+    loading: boolean;
+    error: string | null;
+  }>({
+    loading: false,
+    error: null
+  });
+
+  const register = async (userData: RegisterRequest) => {
+    try {
+      setState({ loading: true, error: null });
+      const response = await authService.register(userData);
+      setState({ loading: false, error: null });
+      return response;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error en registro';
+      setState({ loading: false, error: errorMessage });
+      throw error;
+    }
+  };
+
+  return { register, ...state };
+}
+
+// Hook para obtener información del usuario
+export function useGetMe() {
+  const [state, setState] = useState<UseApiState<AuthUser>>({
+    data: null,
+    loading: true,
+    error: null
+  });
+
+  const getMe = async (token: string) => {
+    try {
+      setState(prev => ({ ...prev, loading: true, error: null }));
+      const user = await authService.getMe(token);
+      setState({ data: user, loading: false, error: null });
+      return user;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error obteniendo información del usuario';
+      setState({ data: null, loading: false, error: errorMessage });
+      throw error;
+    }
+  };
+
+  return { getMe, ...state };
 } 

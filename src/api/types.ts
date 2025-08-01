@@ -132,4 +132,40 @@ export interface ApiError {
   message: string;
   status: number;
   details?: unknown;
+}
+
+// Tipos para autenticación
+export interface AuthUser {
+  id: number;
+  username: string;
+  email: string;
+  provider: string;
+  confirmed: boolean;
+  blocked: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LoginRequest {
+  identifier: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  jwt: string;
+  user: AuthUser;
+}
+
+export interface AuthError {
+  error: {
+    message: string;
+    status: number;
+    details?: unknown;
+  };
 } 

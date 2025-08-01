@@ -10,6 +10,10 @@ import {
   Monster,
   World,
   Place,
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  AuthUser,
 } from './types';
 
 // Función helper para construir query parameters
@@ -270,5 +274,49 @@ export const dataService = {
         worlds: []
       };
     }
+  }
+};
+
+// Servicio de autenticación
+export const authService = {
+  // Login con email/contraseña
+  async login(credentials: LoginRequest): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post('/auth/local', credentials);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error en login: ${error}`);
+    }
+  },
+
+  // Registro de usuario
+  async register(userData: RegisterRequest): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post('/auth/local/register', userData);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error en registro: ${error}`);
+    }
+  },
+
+  // Obtener información del usuario actual
+  async getMe(token: string): Promise<AuthUser> {
+    try {
+      const response = await apiClient.get('/users/me', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error obteniendo información del usuario: ${error}`);
+    }
+  },
+
+  // Logout (limpiar token)
+  logout(): void {
+    // En el frontend, simplemente removemos el token del localStorage
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('authUser');
   }
 }; 
