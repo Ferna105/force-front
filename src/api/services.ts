@@ -3,13 +3,16 @@ import {
   MonstersResponse,
   WorldsResponse,
   PlacesResponse,
+  ItemsResponse,
   MonsterResponse,
   WorldResponse,
   PlaceResponse,
+  ItemResponse,
   QueryParams,
   Monster,
   World,
   Place,
+  Item,
   LoginRequest,
   RegisterRequest,
   AuthResponse,
@@ -227,6 +230,82 @@ export const placesService = {
       await apiClient.delete(`/places/${id}`);
     } catch (error) {
       throw new Error(`Error deleting place ${id}: ${error}`);
+    }
+  }
+};
+
+// Servicio para Items
+export const itemsService = {
+  // Obtener todos los items
+  async getAll(params?: QueryParams): Promise<ItemsResponse> {
+    try {
+      const queryString = buildQueryParams(params);
+      const response = await apiClient.get(`/items?${queryString}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error fetching items: ${error}`);
+    }
+  },
+
+  // Obtener un item por ID
+  async getById(id: number, params?: QueryParams): Promise<ItemResponse> {
+    try {
+      const queryString = buildQueryParams(params);
+      const response = await apiClient.get(`/items/${id}?${queryString}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error fetching item ${id}: ${error}`);
+    }
+  },
+
+  // Obtener items por tipo
+  async getByType(type: string, params?: QueryParams): Promise<ItemsResponse> {
+    try {
+      const queryString = buildQueryParams(params);
+      const response = await apiClient.get(`/items?filters[type]=${type}&${queryString}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error fetching items by type ${type}: ${error}`);
+    }
+  },
+
+  // Obtener items por rareza
+  async getByRarity(rarity: string, params?: QueryParams): Promise<ItemsResponse> {
+    try {
+      const queryString = buildQueryParams(params);
+      const response = await apiClient.get(`/items?filters[rarity]=${rarity}&${queryString}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error fetching items by rarity ${rarity}: ${error}`);
+    }
+  },
+
+  // Crear un nuevo item
+  async create(data: Item): Promise<ItemsResponse> {
+    try {
+      const response = await apiClient.post('/items', { data });
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error creating item: ${error}`);
+    }
+  },
+
+  // Actualizar un item
+  async update(id: number, data: Item): Promise<ItemsResponse> {
+    try {
+      const response = await apiClient.put(`/items/${id}`, { data });
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error updating item ${id}: ${error}`);
+    }
+  },
+
+  // Eliminar un item
+  async delete(id: number): Promise<void> {
+    try {
+      await apiClient.delete(`/items/${id}`);
+    } catch (error) {
+      throw new Error(`Error deleting item ${id}: ${error}`);
     }
   }
 };

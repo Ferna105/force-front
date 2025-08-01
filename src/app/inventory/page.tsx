@@ -2,125 +2,20 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useItems, type Item } from '@/api';
 
-// Tipos para los objetos del inventario
-interface InventoryItem {
-  id: number;
-  name: string;
-  description: string;
-  type: 'weapon' | 'armor' | 'potion' | 'material' | 'artifact';
-  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
-  quantity: number;
-  icon: string;
-  stats?: {
-    attack?: number;
-    defense?: number;
-    magic?: number;
-    health?: number;
+// Función para obtener el ícono según el tipo de item
+function getItemIcon(type: string): string {
+  const icons = {
+    weapon: '⚔️',
+    armor: '🛡️',
+    consumable: '🧪',
+    key: '🗝️',
+    misc: '📦'
   };
+  return icons[type as keyof typeof icons] || '📦';
 }
-
-// Datos mockeados del inventario
-const mockInventory: InventoryItem[] = [
-  {
-    id: 1,
-    name: "Espada de Hierro",
-    description: "Una espada básica pero confiable para el combate.",
-    type: "weapon",
-    rarity: "common",
-    quantity: 1,
-    icon: "⚔️",
-    stats: { attack: 15 }
-  },
-  {
-    id: 2,
-    name: "Armadura de Cuero",
-    description: "Protección ligera pero efectiva contra ataques básicos.",
-    type: "armor",
-    rarity: "common",
-    quantity: 1,
-    icon: "🛡️",
-    stats: { defense: 10 }
-  },
-  {
-    id: 3,
-    name: "Poción de Curación",
-    description: "Restaura 50 puntos de salud al instante.",
-    type: "potion",
-    rarity: "common",
-    quantity: 5,
-    icon: "🧪",
-    stats: { health: 50 }
-  },
-  {
-    id: 4,
-    name: "Cristal Mágico",
-    description: "Material raro usado para encantamientos poderosos.",
-    type: "material",
-    rarity: "rare",
-    quantity: 3,
-    icon: "💎"
-  },
-  {
-    id: 5,
-    name: "Bastón del Arcano",
-    description: "Un bastón mágico que aumenta el poder de los hechizos.",
-    type: "weapon",
-    rarity: "epic",
-    quantity: 1,
-    icon: "🔮",
-    stats: { magic: 25, attack: 8 }
-  },
-  {
-    id: 6,
-    name: "Coraza de Dragón",
-    description: "Armadura legendaria forjada con escamas de dragón.",
-    type: "armor",
-    rarity: "legendary",
-    quantity: 1,
-    icon: "🐉",
-    stats: { defense: 35, health: 20 }
-  },
-  {
-    id: 7,
-    name: "Poción de Maná",
-    description: "Restaura 30 puntos de maná para lanzar hechizos.",
-    type: "potion",
-    rarity: "uncommon",
-    quantity: 8,
-    icon: "🔵",
-    stats: { magic: 30 }
-  },
-  {
-    id: 8,
-    name: "Amuleto de la Suerte",
-    description: "Un artefacto místico que aumenta la fortuna del portador.",
-    type: "artifact",
-    rarity: "rare",
-    quantity: 1,
-    icon: "🍀"
-  },
-  {
-    id: 9,
-    name: "Hierro Refinado",
-    description: "Material de alta calidad para forjar armas.",
-    type: "material",
-    rarity: "uncommon",
-    quantity: 12,
-    icon: "⚒️"
-  },
-  {
-    id: 10,
-    name: "Daga Venenosa",
-    description: "Una daga envenenada que causa daño adicional.",
-    type: "weapon",
-    rarity: "rare",
-    quantity: 1,
-    icon: "🗡️",
-    stats: { attack: 20 }
-  }
-];
 
 // Función para obtener el color según la rareza
 function getRarityColor(rarity: string): string {
@@ -163,38 +58,45 @@ function getTypeName(type: string): string {
   const types = {
     weapon: 'Arma',
     armor: 'Armadura',
-    potion: 'Poción',
-    material: 'Material',
-    artifact: 'Artefacto'
+    consumable: 'Consumible',
+    key: 'Llave',
+    misc: 'Misceláneo'
   };
   return types[type as keyof typeof types] || type;
 }
 
 export default function InventoryPage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
-  const [inventory, setInventory] = useState<InventoryItem[]>(mockInventory);
   const [filter, setFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  // Obtener items del backend con paginación de 10
+  const { data: items, loading: itemsLoading, error: itemsError } = useItems(
+    useMemo(() => ({
+      pagination: { pageSize: 10 },
+      populate: 'icon'
+    }), [])
+  );
+
   // Redirigir si no está autenticado
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (!authLoading && !user) {
       router.push('/login');
     }
-  }, [user, isLoading, router]);
+  }, [user, authLoading, router]);
 
   // Filtrar inventario
-  const filteredInventory = inventory.filter(item => {
-    const matchesFilter = filter === 'all' || item.type === filter;
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredInventory = items?.filter(item => {
+    const matchesFilter = filter === 'all' || item.attributes.type === filter;
+    const matchesSearch = item.attributes.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (item.attributes.description?.toLowerCase().includes(searchTerm.toLowerCase()) || false);
     return matchesFilter && matchesSearch;
-  });
+  }) || [];
 
   // No agrupar por tipo - mantener lista plana
 
-  if (isLoading) {
+  if (authLoading || itemsLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950">
         <div className="container mx-auto px-4 py-6">
@@ -213,6 +115,27 @@ export default function InventoryPage() {
 
   if (!user) {
     return null; // Se redirigirá automáticamente
+  }
+
+  // Mostrar error si hay problema cargando los items
+  if (itemsError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="text-6xl mb-4">❌</div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Error al cargar el inventario
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                {itemsError}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -247,7 +170,7 @@ export default function InventoryPage() {
             </div>
             <div className="text-right">
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                Total: {inventory.length} objetos
+                Total: {items?.length || 0} objetos
               </div>
             </div>
           </div>
@@ -288,9 +211,9 @@ export default function InventoryPage() {
                 <option value="all">Todos los tipos</option>
                 <option value="weapon">Armas</option>
                 <option value="armor">Armaduras</option>
-                <option value="potion">Pociones</option>
-                <option value="material">Materiales</option>
-                <option value="artifact">Artefactos</option>
+                <option value="consumable">Consumibles</option>
+                <option value="key">Llaves</option>
+                <option value="misc">Misceláneos</option>
               </select>
             </div>
           </div>
@@ -313,64 +236,63 @@ export default function InventoryPage() {
               {filteredInventory.map((item) => (
                 <div
                   key={item.id}
-                  className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${getRarityBgColor(item.rarity)} ${getRarityBorderColor(item.rarity)}`}
+                  className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${getRarityBgColor(item.attributes.rarity)} ${getRarityBorderColor(item.attributes.rarity)}`}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl">{item.icon}</span>
+                      <span className="text-2xl">{getItemIcon(item.attributes.type)}</span>
                       <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">
-                          {item.name}
+                          {item.attributes.name}
                         </h3>
                         <div className="flex items-center gap-2">
-                          <span className={`text-xs font-medium ${getRarityColor(item.rarity)}`}>
-                            {item.rarity.toUpperCase()}
+                          <span className={`text-xs font-medium ${getRarityColor(item.attributes.rarity)}`}>
+                            {item.attributes.rarity.toUpperCase()}
                           </span>
                           <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {getTypeName(item.type)}
+                            {getTypeName(item.attributes.type)}
                           </span>
                         </div>
                       </div>
                     </div>
-                    {item.quantity > 1 && (
+                    {item.attributes.is_stackable && item.attributes.max_stack > 1 && (
                       <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
-                        x{item.quantity}
+                        Stack: {item.attributes.max_stack}
                       </span>
                     )}
                   </div>
                   
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
-                    {item.description}
+                    {item.attributes.description || 'Sin descripción'}
                   </p>
                   
-                  {item.stats && (
-                    <div className="space-y-1">
-                      {item.stats.attack && (
-                        <div className="flex items-center gap-1 text-xs">
-                          <span className="text-red-600">⚔️</span>
-                          <span className="text-gray-600 dark:text-gray-400">Ataque: {item.stats.attack}</span>
-                        </div>
-                      )}
-                      {item.stats.defense && (
-                        <div className="flex items-center gap-1 text-xs">
-                          <span className="text-blue-600">🛡️</span>
-                          <span className="text-gray-600 dark:text-gray-400">Defensa: {item.stats.defense}</span>
-                        </div>
-                      )}
-                      {item.stats.magic && (
-                        <div className="flex items-center gap-1 text-xs">
-                          <span className="text-purple-600">🔮</span>
-                          <span className="text-gray-600 dark:text-gray-400">Magia: {item.stats.magic}</span>
-                        </div>
-                      )}
-                      {item.stats.health && (
-                        <div className="flex items-center gap-1 text-xs">
-                          <span className="text-green-600">❤️</span>
-                          <span className="text-gray-600 dark:text-gray-400">Salud: {item.stats.health}</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  {/* Información adicional del item */}
+                  <div className="space-y-1">
+                    {item.attributes.value && (
+                      <div className="flex items-center gap-1 text-xs">
+                        <span className="text-yellow-600">💰</span>
+                        <span className="text-gray-600 dark:text-gray-400">Valor: {item.attributes.value}</span>
+                      </div>
+                    )}
+                    {item.attributes.weight && (
+                      <div className="flex items-center gap-1 text-xs">
+                        <span className="text-gray-600">⚖️</span>
+                        <span className="text-gray-600 dark:text-gray-400">Peso: {item.attributes.weight}kg</span>
+                      </div>
+                    )}
+                    {item.attributes.usable && (
+                      <div className="flex items-center gap-1 text-xs">
+                        <span className="text-green-600">✨</span>
+                        <span className="text-gray-600 dark:text-gray-400">Usable</span>
+                      </div>
+                    )}
+                    {item.attributes.cooldown > 0 && (
+                      <div className="flex items-center gap-1 text-xs">
+                        <span className="text-blue-600">⏱️</span>
+                        <span className="text-gray-600 dark:text-gray-400">Cooldown: {item.attributes.cooldown}s</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

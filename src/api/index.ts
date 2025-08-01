@@ -8,12 +8,15 @@ export type {
   Monster,
   World,
   Place,
+  Item,
   MonstersResponse,
   WorldsResponse,
   PlacesResponse,
+  ItemsResponse,
   MonsterResponse,
   WorldResponse,
   PlaceResponse,
+  ItemResponse,
   QueryParams,
   ApiError,
   AuthUser,
@@ -28,6 +31,7 @@ export {
   monstersService,
   worldsService,
   placesService,
+  itemsService,
   dataService,
   authService
 } from './services';
@@ -40,6 +44,9 @@ export {
   useWorlds,
   usePlaces,
   usePlacesByWorld,
+  useItems,
+  useItemsByType,
+  useItemsByRarity,
   useLogin,
   useRegister,
   useGetMe

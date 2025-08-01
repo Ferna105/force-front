@@ -168,4 +168,29 @@ export interface AuthError {
     status: number;
     details?: unknown;
   };
-} 
+}
+
+// Tipos para el content type Item
+export interface Item extends StrapiEntity {
+  attributes: {
+    name: string;
+    slug: string;
+    description: string | null;
+    type: 'weapon' | 'armor' | 'consumable' | 'key' | 'misc';
+    rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+    icon: StrapiImage | null;
+    weight: number | null;
+    value: number | null;
+    is_stackable: boolean;
+    max_stack: number;
+    usable: boolean;
+    cooldown: number;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+  };
+}
+
+// Tipos para las respuestas de Item
+export type ItemsResponse = StrapiResponse<Item[]>;
+export type ItemResponse = StrapiResponse<Item>; 

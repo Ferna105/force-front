@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { dataService, monstersService, worldsService, placesService, authService } from './services';
-import type { Monster, World, Place, QueryParams, LoginRequest, RegisterRequest, AuthUser } from './types';
+import { dataService, monstersService, worldsService, placesService, itemsService, authService } from './services';
+import type { Monster, World, Place, Item, QueryParams, LoginRequest, RegisterRequest, AuthUser } from './types';
 
 // Hook para manejar estados de carga y error
 interface UseApiState<T> {
@@ -266,4 +266,95 @@ export function useGetMe() {
   };
 
   return { getMe, ...state };
+}
+
+// Hook para obtener items
+export function useItems(params?: QueryParams) {
+  const [state, setState] = useState<UseApiState<Item[]>>({
+    data: null,
+    loading: true,
+    error: null
+  });
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        setState(prev => ({ ...prev, loading: true, error: null }));
+        const response = await itemsService.getAll(params);
+        setState({ data: response.data, loading: false, error: null });
+      } catch (error) {
+        setState({ 
+          data: null, 
+          loading: false, 
+          error: error instanceof Error ? error.message : 'Error desconocido' 
+        });
+      }
+    };
+
+    fetchItems();
+  }, [params]);
+
+  return state;
+}
+
+// Hook para obtener items por tipo
+export function useItemsByType(type: string, params?: QueryParams) {
+  const [state, setState] = useState<UseApiState<Item[]>>({
+    data: null,
+    loading: true,
+    error: null
+  });
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        setState(prev => ({ ...prev, loading: true, error: null }));
+        const response = await itemsService.getByType(type, params);
+        setState({ data: response.data, loading: false, error: null });
+      } catch (error) {
+        setState({ 
+          data: null, 
+          loading: false, 
+          error: error instanceof Error ? error.message : 'Error desconocido' 
+        });
+      }
+    };
+
+    if (type) {
+      fetchItems();
+    }
+  }, [type, params]);
+
+  return state;
+}
+
+// Hook para obtener items por rareza
+export function useItemsByRarity(rarity: string, params?: QueryParams) {
+  const [state, setState] = useState<UseApiState<Item[]>>({
+    data: null,
+    loading: true,
+    error: null
+  });
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        setState(prev => ({ ...prev, loading: true, error: null }));
+        const response = await itemsService.getByRarity(rarity, params);
+        setState({ data: response.data, loading: false, error: null });
+      } catch (error) {
+        setState({ 
+          data: null, 
+          loading: false, 
+          error: error instanceof Error ? error.message : 'Error desconocido' 
+        });
+      }
+    };
+
+    if (rarity) {
+      fetchItems();
+    }
+  }, [rarity, params]);
+
+  return state;
 } 
